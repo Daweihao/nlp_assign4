@@ -1,5 +1,6 @@
 from nltk.corpus import conll2002
 from sklearn.feature_extraction import DictVectorizer
+import sklearn_crfsuite
 from sklearn.linear_model import Perceptron
 from sklearn.linear_model import SGDClassifier
 from sklearn.linear_model import PassiveAggressiveClassifier
@@ -14,7 +15,6 @@ from sklearn.ensemble import RandomForestClassifier
 # Assignment 4: NER
 # This is just to help you get going. Feel free to
 # add to or modify any part of it.
-
 
 def getfeats(word, o):
     """ This takes the word in question and
@@ -80,21 +80,8 @@ def word2features(sent, i):
         if len(sent) > i + o >= 0:
             word = sent[i + o][0]
             featlist = getfeats(word, o)
-            # shape = getShape(word)
-            # if o == -1:
-            #     lmr += shape
-            #     lm += shape
-            # elif o == 0 :
-            #     lmr += shape
-            #     lm += shape
-            #     mr += shape
-            # else:
-            #     lmr += shape
-            #     mr += shape
-
             #featlist.append((str(o) + 'wordpos', sent[i + o][1]))
             features.extend(featlist)
-    # features.extend([('lmr', lmr),('lm', lm), ('mr', mr)])
     # features.extend([('word', word)])
     # features.extend([('word[-3:]', word[-3:])])
      #features.extend([('word[:2]', word[2:])])
@@ -118,6 +105,8 @@ if __name__ == "__main__":
     train_feats = []
     train_labels = []
 
+
+
     for sent in train_sents:
         for i in range(len(sent)):
             feats = word2features(sent, i)
@@ -137,7 +126,6 @@ if __name__ == "__main__":
     # model = DecisionTreeClassifier()
     # model = AdaBoostClassifier(DecisionTreeClassifier(max_depth=3))
     # model = LogisticRegression()
-
     model.fit(X_train, train_labels)
     # TODO: play with other models
 
@@ -164,8 +152,8 @@ if __name__ == "__main__":
                 word = sent[i][0]
                 gold = sent[i][-1]
                 pred = y_pred[j]
-                j += 1
                 out.write("{}\t{}\t{}\n".format(word,gold,pred))
+                j += 1
         out.write("\n")
 
     print("Now run: python conlleval.py results.txt")
